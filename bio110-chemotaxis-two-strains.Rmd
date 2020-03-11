@@ -1,0 +1,97 @@
+---
+title: "Chemotaxis - two strains"
+output:
+word_document: default
+html_document:
+df_print: paged
+pdf_document: default
+---
+
+## Chemotaxis Trial 1
+
+
+Now that you have collected data from your first chemotaxis trial we will calculate a Chemotaxis index using your data and plot that as a bar graph with error bars representing the 95% confidence interval.
+
+Load the tidyverse:
+```{r}
+library(tidyverse)
+
+```
+
+
+First let's put our measurements into a data frame. We can do this by creating vectors for each column, provided that vector components are in the correct order (e.g. all measurements for the first plate are in the first position of each vector, all for the second are in the second position, etc.).
+
+
+```{r}
+
+# In this example we have plates a, b, and c. In plate a, the T1 quadrant has 10, T2 has 8, C1 has 3, and C2 has 4. The measurements for the other plates follow a similar pattern.
+
+strain<-c("wt", "wt", "wt")
+plate<-c("a","b","c")
+T1<-c(10, 8, 10)
+T2<-c(8, 7, 9)
+C1<-c(3, 2, 5)
+C2<-c(4, 4, 4)
+
+ df <- data.frame(strain, plate,T1,T2,C1,C2)       # df is a data frame
+ df
+
+```
+
+
+Now we can use this data to generate the Chemotaxis Index for each plate. The formula is:
+
+ChemI= ((T1+T2)-(C1+C2))/(T1+T2+C1+C2)
+
+We can add a column to our data frame by using the "mutate" function. "Mutate" allows you to create a new column of values based upon data already in the data frame. So using our example above:
+
+```{r}
+
+
+df<-mutate(.data=df, ChemI=((T1+T2)-(C1+C2))/(T1+T2+C1+C2))
+
+#print out our updated df dataframe
+df
+
+
+
+
+
+```
+
+
+Now that we have the Chemotaxis Index for each plate, we can use group by/summarise to calculate the average, standard deviation, n, and upper and lower confidence intervals:
+
+### Calculate means for the different strains.
+
+```{r}
+meanChemI<-df %>% group_by(strain) %>% summarise(avg=mean(ChemI), StandardDeviation=sd(ChemI), n=n(), upperCI=avg+((qnorm(0.975)*StandardDeviation)/sqrt(n)), lowerCI=avg-((qnorm(0.975)*StandardDeviation)/sqrt(n)))
+
+meanChemI
+```
+### Now make a barplot using ggplot
+```{r}
+ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")
+```
+# Improve the bargraph with title and labels and pick a theme
+```{r}
+ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")+labs(title="Chemotaxis index of C. elegans strains to 1% Isoamyl alcohol after 1 hour", x="C elegans strain", y="Chemotaxis Index", fill = "Strain") + theme_minimal()+ylim(0,1)
+```
+
+
+
+### Plot a bar graph with 95% Confidence interval used for error bars
+
+```{r}
+ChemIPlot <- ggplot(data=meanChemI, aes(strain, avg)) +
+geom_col() +
+geom_errorbar(aes(ymin = lowerCI, ymax = upperCI), width=0.2)
+
+ChemIPlot + labs(title="Chemotaxis index of C. elegans strains to 1% Isoamyl alcohol after 1 hour",y="Chemotaxis Index (95% CI)", x = "Strain") + theme_minimal() + ylim(0,1)
+```
+### Save the plot
+```{r}
+ggsave("plot.png", height=5, width=8)
+
+
+```
