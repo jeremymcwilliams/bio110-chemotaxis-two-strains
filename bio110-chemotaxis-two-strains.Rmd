@@ -7,10 +7,10 @@ df_print: paged
 pdf_document: default
 ---
 
-## Chemotaxis Trial 1
+## Chemotaxis - Two strains
 
 
-Now that you have collected data from your first chemotaxis trial we will calculate a Chemotaxis index using your data and plot that as a bar graph with error bars representing the 95% confidence interval.
+You have been given data for chemotaxis behavior of wildtype v daf-19 C. elegans to isoamyl alcohol.  You will use this data to calculate a chemotaxis index for each plate.  Then you will calculate a mean chemotaxis index for each strain with 95% confidence intervals.  Finally, you will perform a Welch's t-test to determine if the mean chemotaxis index for isoamyl alcohol for these strains are significantly different.
 
 Load the tidyverse:
 ```{r}
@@ -19,42 +19,38 @@ library(tidyverse)
 ```
 
 
-First let's put our measurements into a data frame. We can do this by creating vectors for each column, provided that vector components are in the correct order (e.g. all measurements for the first plate are in the first position of each vector, all for the second are in the second position, etc.).
+For this lab, the the collected data for both strains is available in the data.csv file. Below, load the data, and then look at the data frame.
+
 
 
 ```{r}
 
-# In this example we have plates a, b, and c. In plate a, the T1 quadrant has 10, T2 has 8, C1 has 3, and C2 has 4. The measurements for the other plates follow a similar pattern.
+allData<-read_csv("data.csv")
 
-strain<-c("wt", "wt", "wt")
-plate<-c("a","b","c")
-T1<-c(10, 8, 10)
-T2<-c(8, 7, 9)
-C1<-c(3, 2, 5)
-C2<-c(4, 4, 4)
-
- df <- data.frame(strain, plate,T1,T2,C1,C2)       # df is a data frame
- df
+allData
 
 ```
 
 
-Now we can use this data to generate the Chemotaxis Index for each plate. The formula is:
+Like last lab, we want to determine the Chemotaxis Index. 
+The formula is:
 
 ChemI= ((T1+T2)-(C1+C2))/(T1+T2+C1+C2)
 
+Since our data is all in one data frame and contains more than one strain, we have to do a little more work to get our 
+
+
 We can add a column to our data frame by using the "mutate" function. "Mutate" allows you to create a new column of values based upon data already in the data frame. So using our example above:
+
+
 
 ```{r}
 
 
-df<-mutate(.data=df, ChemI=((T1+T2)-(C1+C2))/(T1+T2+C1+C2))
+df<-mutate(.data=allData, ChemI=((T1+T2)-(C1+C2))/(T1+T2+C1+C2))
 
 #print out our updated df dataframe
 df
-
-
-
 
 
 ```
@@ -95,3 +91,14 @@ ggsave("plot.png", height=5, width=8)
 
 
 ```
+
+Now run a Welch two sample t-test to determine whether the measured CI values are significantly different:
+
+```{r}
+t.test(ChemI ~ strain, data=df)
+
+```
+
+
+
+
