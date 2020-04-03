@@ -10,7 +10,11 @@ pdf_document: default
 ## Chemotaxis - Two strains
 
 
-You have been given data for chemotaxis behavior of wildtype v daf-19 C. elegans to isoamyl alcohol.  You will use this data to calculate a chemotaxis index for each plate.  Then you will calculate a mean chemotaxis index for each strain with 95% confidence intervals.  Finally, you will perform a Welch's t-test to determine if the mean chemotaxis index for isoamyl alcohol for these strains are significantly different.
+This week we have collected data for chemotaxis behavior of wildtype v daf-19 C. elegans to 1% isoamyl alcohol. The goals for this week are to
+*calculate a chemotaxis index for each plate
+*calculate a mean chemotaxis index for each strain with 95% confidence intervals
+*create a bar graph with this data
+*perform a Welch's t-test to determine if the mean chemotaxis index for these strains are significantly different
 
 Load the tidyverse:
 ```{r}
@@ -19,15 +23,15 @@ library(tidyverse)
 ```
 
 
-For this lab, the the collected data for both strains is available in the data.csv file. Below, load the data, and then look at the data frame.
+For this lab, the collected data for both strains is available in the data.csv file. Below, load the data, and then look at the data frame.
 
 
 
 ```{r}
 
-allData<-read_csv("data.csv")
+#allData<-read_csv("data.csv")
 
-allData
+#allData
 
 ```
 
@@ -37,7 +41,6 @@ The formula is:
 
 ChemI= ((T1+T2)-(C1+C2))/(T1+T2+C1+C2)
 
-Since our data is all in one data frame and contains more than one strain, we have to do a little more work to get our 
 
 
 We can add a column to our data frame by using the "mutate" function. "Mutate" allows you to create a new column of values based upon data already in the data frame. So using our example above:
@@ -47,10 +50,10 @@ We can add a column to our data frame by using the "mutate" function. "Mutate" a
 ```{r}
 
 
-df<-mutate(.data=allData, ChemI=((T1+T2)-(C1+C2))/(T1+T2+C1+C2))
+#df<-mutate(.data=allData, ChemI=((T1+T2)-(C1+C2))/(T1+T2+C1+C2))
 
 #print out our updated df dataframe
-df
+#df
 
 
 ```
@@ -61,17 +64,17 @@ Now that we have the Chemotaxis Index for each plate, we can use group by/summar
 ### Calculate means for the different strains.
 
 ```{r}
-meanChemI<-df %>% group_by(strain) %>% summarise(avg=mean(ChemI), StandardDeviation=sd(ChemI), n=n(), upperCI=avg+((qnorm(0.975)*StandardDeviation)/sqrt(n)), lowerCI=avg-((qnorm(0.975)*StandardDeviation)/sqrt(n)))
+#meanChemI<-df %>% group_by(strain) %>% summarise(avg=mean(ChemI), StandardDeviation=sd(ChemI), n=n(), upperCI=avg+((qnorm(0.975)*StandardDeviation)/sqrt(n)), lowerCI=avg-((qnorm(0.975)*StandardDeviation)/sqrt(n)))
 
-meanChemI
+#meanChemI
 ```
 ### Now make a barplot using ggplot
 ```{r}
-ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")
+#ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")
 ```
 # Improve the bargraph with title and labels and pick a theme
 ```{r}
-ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")+labs(title="Chemotaxis index of C. elegans strains to 1% Isoamyl alcohol after 1 hour", x="C elegans strain", y="Chemotaxis Index", fill = "Strain") + theme_minimal()+ylim(0,1)
+#ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")+labs(title="your title here", x="C elegans strain", y="Chemotaxis Index", fill = "Strain") + theme_minimal()+ylim(0,1)
 ```
 
 
@@ -79,11 +82,11 @@ ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")+l
 ### Plot a bar graph with 95% Confidence interval used for error bars
 
 ```{r}
-ChemIPlot <- ggplot(data=meanChemI, aes(strain, avg)) +
-geom_col() +
-geom_errorbar(aes(ymin = lowerCI, ymax = upperCI), width=0.2)
+#ChemIPlot <- ggplot(data=meanChemI, aes(strain, avg)) +
+#geom_col() +
+#geom_errorbar(aes(ymin = lowerCI, ymax = upperCI), width=0.2)
 
-ChemIPlot + labs(title="Chemotaxis index of C. elegans strains to 1% Isoamyl alcohol after 1 hour",y="Chemotaxis Index (95% CI)", x = "Strain") + theme_minimal() + ylim(0,1)
+#ChemIPlot + labs(title="your title here",y="Chemotaxis Index (95% CI)", x = "Strain") + theme_minimal() + ylim(0,1)
 ```
 ### Save the plot
 ```{r}
@@ -95,10 +98,6 @@ ggsave("plot.png", height=5, width=8)
 Now run a Welch two sample t-test to determine whether the measured CI values are significantly different:
 
 ```{r}
-t.test(ChemI ~ strain, data=df)
+#t.test(ChemI ~ strain, data=df)
 
 ```
-
-
-
-
