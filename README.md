@@ -22,7 +22,7 @@ Before doing anything, make sure you close any current projects in RStudio:
 
 in console (lower left-hand corner):
 * library(usethis)
-* use_course("https://github.com/jeremymcwilliams/bio110-chemotaxis-two-strains/archive/0.7.zip")
+* use_course("https://github.com/jeremymcwilliams/bio110-chemotaxis-two-strains/archive/0.8.zip")
 
 After running the command above, you'll be prompted whether to download to your current directory. Go ahead and answer in the affirmative (you'll be presented with variations on "yes"). Once the course files download, you'll be prompted as to whether to delete the zip file. Again, answer in the affirmative. Once you do, click "Save", and your window will refresh to a new R session.  
 

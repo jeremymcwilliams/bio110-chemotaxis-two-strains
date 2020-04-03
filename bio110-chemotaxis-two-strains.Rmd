@@ -7,10 +7,10 @@ df_print: paged
 pdf_document: default
 ---
 
-## Chemotaxis - Two strains
+## Chemotaxis Assay - Two strains
 
 
-This week we have collected data for chemotaxis behavior of wildtype v daf-19 C. elegans to 1% isoamyl alcohol. The goals for this week are to
+This week we have collected data for chemotaxis behavior of wildtype v daf-19(-) C. elegans to 1% isoamyl alcohol. The goals for this week are to:
 *calculate a chemotaxis index for each plate
 *calculate a mean chemotaxis index for each strain with 95% confidence intervals
 *create a bar graph with this data
@@ -55,7 +55,6 @@ We can add a column to our data frame by using the "mutate" function. "Mutate" a
 #print out our updated df dataframe
 #df
 
-
 ```
 
 
@@ -67,26 +66,47 @@ Now that we have the Chemotaxis Index for each plate, we can use group by/summar
 #meanChemI<-df %>% group_by(strain) %>% summarise(avg=mean(ChemI), StandardDeviation=sd(ChemI), n=n(), upperCI=avg+((qnorm(0.975)*StandardDeviation)/sqrt(n)), lowerCI=avg-((qnorm(0.975)*StandardDeviation)/sqrt(n)))
 
 #meanChemI
+
+
 ```
 ### Now make a barplot using ggplot
 ```{r}
 #ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")
+
+
 ```
-# Improve the bargraph with title and labels and pick a theme
+# Take a look at your plot.  Is this the order you want the data presented?  The code has plotted the data in the order it appeared in the meanChemI data table, daf-19 followed by wt.  Generally, the data for the wild-type strain should appear first on the x-axis followed by any mutant strains. To make this change, use the following code to determine the order of the x-axis and then make the plot again.
+
 ```{r}
-#ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")+labs(title="your title here", x="C elegans strain", y="Chemotaxis Index", fill = "Strain") + theme_minimal()+ylim(0,1)
+#meanChemI$strain<-factor(meanChemI$strain, levels=c("wt", "daf-19"))
+
+#ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")
+
+
+
+```
+
+
+# Improve the bargraph with labels for the axes.  You do not need a title for your graph in R.  For the chemotaxis project, your final format for presenting your data will be an oral presntation with a slideshow. You will add a title later when you generate Slides to present your results.
+
+#The theme_minimal code is a choice for how the graph background and axes look. If you want to play with how the graph looks, you can do a websearch for geom_bar themes and locate other code options to designate a different presentation of the data.
+```{r}
+#ggplot(data=meanChemI, mapping=aes(x=strain, y=avg))+geom_bar(stat="identity")+labs(x="your x-axis label", y="your y-axis label", fill = "Strain") + theme_minimal()+ylim(0,1)
+
 ```
 
 
 
-### Plot a bar graph with 95% Confidence interval used for error bars
+### Plot a bar graph with 95% Confidence interval used for error bars and adjust the y-axis limits to extend from -1 to +1.
 
 ```{r}
 #ChemIPlot <- ggplot(data=meanChemI, aes(strain, avg)) +
 #geom_col() +
 #geom_errorbar(aes(ymin = lowerCI, ymax = upperCI), width=0.2)
 
-#ChemIPlot + labs(title="your title here",y="Chemotaxis Index (95% CI)", x = "Strain") + theme_minimal() + ylim(0,1)
+#ChemIPlot + labs(x="your x-axis label", y="your y-axis label", fill = "Strain") + theme_minimal() + ylim(-1,1)
+
+
 ```
 ### Save the plot
 ```{r}
@@ -94,10 +114,19 @@ ggsave("plot.png", height=5, width=8)
 
 
 ```
+###Look at your plot. You have two bars representing the mean chemotaxis index for each strain. How do you know if these are statistically different from each other? 
 
-Now run a Welch two sample t-test to determine whether the measured CI values are significantly different:
+#from the Handbook for Biological Statistics by John H. MacDonald (http://www.biostathandbook.com/probability.html):
 
+#"The basic idea of a statistical test is to identify a null hypothesis, collect some data, then estimate the probability of getting the observed data if the null hypothesis were true. If the probability of getting a result like the observed one is low under the null hypothesis, you conclude that the null hypothesis is probably not true."
+
+#The null hypothesis for comparing two samples is that they are not different. You must run a statistical analysis called a t-test to calculate the probability (p-value) that the null hypothesis is true, i.e., the strains have the same chemotaxis index. A very low p-value indicates that the strains have very low probability of being the same and are instead significantly different. A Welch's t-test is specifically used when sample sizes are small (less than 10) or unequal or if variances are large.
+
+#t.test(ChemI ~ strain, data=df) will examine the chemotaxis index, "ChemI", of each plate sorted by "~" the strain in our df dataframe table created earlier in this tutorial to perform a Welch's t-test with your data.
+
+#Generally a p-value less than 0.05 indicates the two means are significantly different and in this case that your mutant strain behaves differently than your wild-type strain.
 ```{r}
 #t.test(ChemI ~ strain, data=df)
 
 ```
+# Be sure to record the results of your t-test in your online lab notebook.
