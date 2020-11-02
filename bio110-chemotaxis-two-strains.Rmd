@@ -10,7 +10,7 @@ pdf_document: default
 ## Chemotaxis Assay - Two strains
 
 
-This week we have collected data for chemotaxis behavior of wildtype v daf-19(-) C. elegans to 1% isoamyl alcohol. The goals for this week are to:
+This week we will collect data for chemotaxis behavior of wildtype v daf-19(-) C. elegans to 1% isoamyl alcohol. The goals for this week are to:
 *calculate a chemotaxis index for each plate
 *calculate a mean chemotaxis index for each strain with 95% confidence intervals
 *create a bar graph with this data
@@ -23,7 +23,7 @@ library(tidyverse)
 ```
 
 
-For this lab, the collected data for both strains is available in the data.csv file. Below, load the data, and then look at the data frame.
+First you will need to upload your data for both strains in a .csv file. Upload load your data file in the lower right window using the upload button, and then load the data using the code below in a data frame called allData. Your file name should be in the "".
 
 
 
@@ -36,7 +36,7 @@ For this lab, the collected data for both strains is available in the data.csv f
 ```
 
 
-Like last lab, we want to determine the Chemotaxis Index. 
+First, we want to determine the Chemotaxis Index for each plate. 
 The formula is:
 
 ChemI= ((T1+T2)-(C1+C2))/(T1+T2+C1+C2)
@@ -52,7 +52,7 @@ We can add a column to our data frame by using the "mutate" function. "Mutate" a
 
 #df<-mutate(.data=allData, ChemI=((T1+T2)-(C1+C2))/(T1+T2+C1+C2))
 
-#print out our updated df dataframe
+#print out your updated df dataframe
 #df
 
 ```
@@ -87,7 +87,7 @@ Now that we have the Chemotaxis Index for each plate, we can use group by/summar
 ```
 
 
-# Improve the bargraph with labels for the axes.  You do not need a title for your graph in R.  For the chemotaxis project, your final format for presenting your data will be an oral presntation with a slideshow. You will add a title later when you generate Slides to present your results.
+# Improve the bargraph with labels for the axes.  You do not need a title for your graph in R.  For the chemotaxis project, your final format for presenting your data will be an oral presentation with a slideshow. You will add a title later when you generate Slides to present your results.
 
 #The theme_minimal code is a choice for how the graph background and axes look. If you want to play with how the graph looks, you can do a websearch for geom_bar themes and locate other code options to designate a different presentation of the data.
 ```{r}
